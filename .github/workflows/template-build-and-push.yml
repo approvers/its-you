@@ -62,7 +62,8 @@ jobs:
         with:
           images: ${{ inputs.registry }}/${{ inputs.image_name }}
           tags: |
-            type=raw,value={{sha}}-{{!inputs.is_release && 'developer' || ''}}
+            type=sha,format=long,prefix='',enable=${{ inputs.is_release }}
+            type=sha,format=long,prefix='',suffix=-developer,enable=${{ !inputs.is_release }}
 
       - name: Build and push Docker image
         id: build-and-push
