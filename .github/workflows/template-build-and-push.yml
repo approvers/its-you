@@ -61,10 +61,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ inputs.registry }}/${{ inputs.image_name }}
-          flavor: |
-            latest=false
           tags: |
-            type=sha,format=long,prefix='',suffix=${{ !inputs.is_release && '-developer' || '' }}
+            type=sha,format=long,prefix=''
 
       - name: Build and push Docker image
         id: build-and-push
@@ -74,9 +72,7 @@ jobs:
           file: ./docker/python/Dockerfile
           push: true
           target: ${{ inputs.is_release && 'runner' || 'developer' }}
-          tags: |
-            ${{ steps.meta.outputs.tags }}
-            ${{ inputs.tags }}
+          tags: ${{ inputs.registry }}/${{ inputs.image_name }}:${{ steps.meta.outputs.version }}${{ !inputs.is_release && '-developer' || '' }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
