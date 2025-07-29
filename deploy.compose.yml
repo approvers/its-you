@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/python/Dockerfile
+      target: runner
+    platform: linux/amd64
+    image: its-you
+    container_name: its-you-app
+    tty: true
