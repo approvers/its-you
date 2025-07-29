@@ -5,7 +5,7 @@ services:
       dockerfile: ./docker/python/Dockerfile
       target: developer
     platform: linux/amd64
-    image: its-you
+    image: its-you-developer
     container_name: its-you-app
     tty: true
     develop:
