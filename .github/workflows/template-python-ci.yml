@@ -39,7 +39,7 @@ jobs:
         run: |
           # Automatically generate the tag from the Git commit SHA.
           COMMIT_SHA=${{ github.sha }}
-          IMAGE_TAG="${COMMIT_SHA}-debug"
+          IMAGE_TAG="${COMMIT_SHA}-developer"
 
           # Use inputs to construct the full image name
           FULL_IMAGE_NAME="${{ inputs.registry }}/${{ inputs.image_name }}:${IMAGE_TAG}"

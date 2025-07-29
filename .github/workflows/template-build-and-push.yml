@@ -7,7 +7,7 @@ name: Docker Image Build and Push [template]
       is_release:
         description: >
           Build for release (runner stage) or development
-          (developer stage with -debug suffix)
+          (developer stage with -developer suffix)
         required: false
         type: boolean
         default: false
@@ -46,7 +46,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Docker Buildx
+      - name: Set up Docker Builds
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to the Registry
@@ -62,7 +62,7 @@ jobs:
         with:
           images: ${{ inputs.registry }}/${{ inputs.image_name }}
           tags: |
-            type=sha,format=long,prefix='',suffix=${{ !inputs.is_release && '-debug' || '' }}
+            type=raw,value={{sha}}-{{!inputs.is_release && 'developer' || ''}}
 
       - name: Build and push Docker image
         id: build-and-push
