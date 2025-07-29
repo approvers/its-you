@@ -1,7 +1,19 @@
-name: Docker Image Build and Push to GHCR
+---
+name: Docker Image Build and Push [template]
 
 on:
   workflow_call:
+    inputs:
+      is_release:
+        description: "Build for release (runner stage) or development (developer stage with -debug suffix)"
+        required: false
+        type: boolean
+        default: false
+      tags:
+        description: 'Additional comma-separated tags to apply to the image (e.g., "latest,v1.0.0")'
+        required: false
+        type: string
+        default: ''
 
 env:
   REGISTRY: ghcr.io
@@ -18,6 +30,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Log in to the Registry
         uses: docker/login-action@v3
@@ -32,14 +46,31 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=sha,format=long
+            # 1. Generate a Git SHA tag. Add a '-debug' suffix if is_release=false.
+            type=sha,format=long,suffix=${{ !inputs.is_release && '-debug' || '' }}
 
+            # 2. Expand additional tags from the caller as a list (comma-separated).
+            #    This rule is enabled only if inputs.tags is not empty.
+            type=list,items=${{ inputs.tags }},enable=${{ inputs.tags != '' }}
+
+      # Dynamically set the build target based on the is_release value
       - name: Build and push Docker image
+        id: build-and-push
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./docker/python/Dockerfile
           push: true
+          # Set 'runner' as the target if is_release=true, otherwise 'developer'.
+          target: ${{ inputs.is_release && 'runner' || 'developer' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Log build details
+        run: |
+          echo "is_release: ${{ inputs.is_release }}"
+          echo "Build Target: ${{ inputs.is_release && 'runner' || 'developer' }}"
+          echo "Custom tags from input: ${{ inputs.tags }}"
+          echo "Image tags pushed: ${{ steps.meta.outputs.tags }}"
