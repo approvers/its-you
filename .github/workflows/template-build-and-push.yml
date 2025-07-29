@@ -60,7 +60,6 @@ jobs:
           images: ${{ inputs.registry }}/${{ inputs.image_name }}
           tags: |
             type=sha,format=long,suffix=${{ !inputs.is_release && '-debug' || '' }}
-            type=csv,value=${{ inputs.tags }},enable=${{ inputs.tags != '' }}
 
       - name: Build and push Docker image
         id: build-and-push
@@ -70,7 +69,9 @@ jobs:
           file: ./docker/python/Dockerfile
           push: true
           target: ${{ inputs.is_release && 'runner' || 'developer' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ inputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
