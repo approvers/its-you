@@ -1,32 +1,40 @@
 ---
 name: Docker Image Build and Push [template]
 
-on:
+"on":
   workflow_call:
     inputs:
       is_release:
-        description: "Build for release (runner stage) or development (developer stage with -debug suffix)"
+        description: >
+          Build for release (runner stage) or development
+          (developer stage with -debug suffix)
         required: false
         type: boolean
         default: false
       tags:
-        description: 'Additional comma-separated tags to apply to the image (e.g., "latest,v1.0.0")'
+        description: >
+          Additional comma-separated tags to apply to the image
+          (e.g., "latest,v1.0.0")
         required: false
         type: string
         default: ''
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+      registry:
+        description: 'The container registry to push to'
+        required: false
+        type: string
+        default: 'ghcr.io'
+      image_name:
+        description: 'The name of the docker image'
+        required: false
+        type: string
+        default: ${{ github.repository }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       packages: write
-
     outputs:
       image_tag: ${{ steps.meta.outputs.tags }}
 
@@ -39,7 +47,7 @@ jobs:
       - name: Log in to the Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ inputs.registry }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -47,16 +55,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ inputs.registry }}/${{ inputs.image_name }}
           tags: |
-            # 1. Generate a Git SHA tag. Add a '-debug' suffix if is_release=false.
             type=sha,format=long,suffix=${{ !inputs.is_release && '-debug' || '' }}
-
-            # 2. Expand additional tags from the caller as a list (comma-separated).
-            #    This rule is enabled only if inputs.tags is not empty.
             type=list,items=${{ inputs.tags }},enable=${{ inputs.tags != '' }}
 
-      # Dynamically set the build target based on the is_release value
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v5
@@ -64,16 +67,8 @@ jobs:
           context: .
           file: ./docker/python/Dockerfile
           push: true
-          # Set 'runner' as the target if is_release=true, otherwise 'developer'.
           target: ${{ inputs.is_release && 'runner' || 'developer' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Log build details
-        run: |
-          echo "is_release: ${{ inputs.is_release }}"
-          echo "Build Target: ${{ inputs.is_release && 'runner' || 'developer' }}"
-          echo "Custom tags from input: ${{ inputs.tags }}"
-          echo "Image tags pushed: ${{ steps.meta.outputs.tags }}"
