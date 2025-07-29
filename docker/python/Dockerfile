@@ -1,0 +1,78 @@
+ARG PYTHON_VERSION=3.13
+ARG VENV_DIR=/opt/venv
+ARG APP_DIR=/opt/app
+
+ARG PYTHON_BIN_PATH=/python
+
+# =================================================================
+FROM ghcr.io/astral-sh/uv:bookworm-slim AS builder
+
+# Inherit Common environment variables
+ARG PYTHON_VERSION
+ARG APP_DIR
+ARG VENV_DIR
+
+ARG PYTHON_BIN_PATH
+
+# Settings for uv to use in distroless
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_INSTALL_DIR=${PYTHON_BIN_PATH} \
+    UV_PYTHON_PREFERENCE=only-managed \
+    UV_PROJECT_ENVIRONMENT=${VENV_DIR}
+
+# Install and create venv
+RUN uv python install ${PYTHON_VERSION} && \
+    uv venv ${VENV_DIR}
+
+WORKDIR ${APP_DIR}
+
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --no-install-project --no-dev --no-editable
+
+COPY ./ ${APP_DIR}
+
+# =================================================================
+FROM gcr.io/distroless/base-debian12:nonroot AS runner
+
+# Inherit Common environment variables
+ARG PYTHON_BIN_PATH
+ARG VENV_DIR
+ARG APP_DIR
+
+# Copy built artifacts
+COPY --from=builder --chown=nonroot:nonroot ${PYTHON_BIN_PATH} ${PYTHON_BIN_PATH}
+COPY --from=builder --chown=nonroot:nonroot ${VENV_DIR} ${VENV_DIR}
+COPY --from=builder --chown=nonroot:nonroot ${APP_DIR} ${APP_DIR}
+
+ENV PATH="${VENV_DIR}/bin:$PATH"
+
+WORKDIR ${APP_DIR}
+
+CMD ["python", "main.py"]
+
+# =================================================================
+FROM ubuntu:24.04 AS developer
+
+# Inherit Common environment variables
+ARG PYTHON_BIN_PATH
+ARG VENV_DIR
+ARG APP_DIR
+
+ENV UV_PROJECT_ENVIRONMENT=${VENV_DIR}
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Copy built artifacts
+COPY --from=builder ${PYTHON_BIN_PATH} ${PYTHON_BIN_PATH}
+COPY --from=builder ${VENV_DIR} ${VENV_DIR}
+COPY --from=builder ${APP_DIR} ${APP_DIR}
+
+ENV PATH="${VENV_DIR}/bin:$PATH"
+
+WORKDIR ${APP_DIR}
+
+RUN uv sync --dev
