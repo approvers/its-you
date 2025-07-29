@@ -24,10 +24,11 @@ name: Docker Image Build and Push [template]
         type: string
         default: 'ghcr.io'
       image_name:
-        description: 'The name of the docker image'
-        required: false
+        description: >
+          The name of the docker image. This must be provided by the caller
+          of the workflow.
+        required: true
         type: string
-        default: ${{ github.repository }}
 
 jobs:
   build-and-push:
