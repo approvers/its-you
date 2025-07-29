@@ -62,7 +62,7 @@ jobs:
         with:
           images: ${{ inputs.registry }}/${{ inputs.image_name }}
           tags: |
-            type=sha,format=long,suffix=${{ !inputs.is_release && '-debug' || '' }}
+            type=sha,format=long,prefix='',suffix=${{ !inputs.is_release && '-debug' || '' }}
 
       - name: Build and push Docker image
         id: build-and-push
