@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/python/Dockerfile
+      target: developer
+    platform: linux/amd64
+    image: its-you
+    container_name: its-you-app
+    tty: true
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /opt/app
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
