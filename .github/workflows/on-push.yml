@@ -1,0 +1,32 @@
+name: CI on Push
+
+"on":
+  push:
+    branches:
+      - '**'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: Build Debug Image
+    uses: ./.github/workflows/template-build-and-push.yml
+    with:
+      is_release: false
+      tags: ''
+
+    permissions:
+      contents: read
+      packages: write
+
+  lint:
+    name: Lint inside Container
+    uses: ./.github/workflows/template-python-ci.yml
+
+    needs: build
+
+    permissions:
+      contents: read
+      packages: read
