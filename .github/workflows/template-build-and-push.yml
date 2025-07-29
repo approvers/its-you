@@ -32,9 +32,11 @@ name: Docker Image Build and Push [template]
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
+
     outputs:
       image_tag: ${{ steps.meta.outputs.tags }}
 
