@@ -5,6 +5,6 @@ services:
       dockerfile: ./docker/python/Dockerfile
       target: runner
     platform: linux/amd64
-    image: its-you
+    image: its-you-runner
     container_name: its-you-app
     tty: true
