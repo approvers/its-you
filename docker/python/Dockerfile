@@ -36,25 +36,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY ./ ${APP_DIR}
 
 # =================================================================
-FROM gcr.io/distroless/base-debian12:nonroot AS runner
-
-# Inherit Common environment variables
-ARG PYTHON_BIN_PATH
-ARG VENV_DIR
-ARG APP_DIR
-
-# Copy built artifacts
-COPY --from=builder --chown=nonroot:nonroot ${PYTHON_BIN_PATH} ${PYTHON_BIN_PATH}
-COPY --from=builder --chown=nonroot:nonroot ${VENV_DIR} ${VENV_DIR}
-COPY --from=builder --chown=nonroot:nonroot ${APP_DIR} ${APP_DIR}
-
-ENV PATH="${VENV_DIR}/bin:$PATH"
-
-WORKDIR ${APP_DIR}
-
-CMD ["python", "main.py"]
-
-# =================================================================
 FROM ubuntu:24.04 AS developer
 
 # Inherit Common environment variables
@@ -76,3 +57,22 @@ ENV PATH="${VENV_DIR}/bin:$PATH"
 WORKDIR ${APP_DIR}
 
 RUN uv sync --dev
+
+# =================================================================
+FROM gcr.io/distroless/base-debian12:nonroot AS runner
+
+# Inherit Common environment variables
+ARG PYTHON_BIN_PATH
+ARG VENV_DIR
+ARG APP_DIR
+
+# Copy built artifacts
+COPY --from=builder --chown=nonroot:nonroot ${PYTHON_BIN_PATH} ${PYTHON_BIN_PATH}
+COPY --from=builder --chown=nonroot:nonroot ${VENV_DIR} ${VENV_DIR}
+COPY --from=builder --chown=nonroot:nonroot ${APP_DIR} ${APP_DIR}
+
+ENV PATH="${VENV_DIR}/bin:$PATH"
+
+WORKDIR ${APP_DIR}
+
+CMD ["python", "main.py"]
