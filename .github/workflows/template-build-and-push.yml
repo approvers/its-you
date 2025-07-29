@@ -60,7 +60,7 @@ jobs:
           images: ${{ inputs.registry }}/${{ inputs.image_name }}
           tags: |
             type=sha,format=long,suffix=${{ !inputs.is_release && '-debug' || '' }}
-            type=list,items=${{ inputs.tags }},enable=${{ inputs.tags != '' }}
+            type=csv,value=${{ inputs.tags }},enable=${{ inputs.tags != '' }}
 
       - name: Build and push Docker image
         id: build-and-push
