@@ -73,7 +73,7 @@ jobs:
           file: ./docker/python/Dockerfile
           push: true
           target: ${{ inputs.is_release && 'runner' || 'developer' }}
-          tags: ${{ inputs.registry }}/${{ inputs.image_name }}:${{ steps.meta.outputs.version }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
