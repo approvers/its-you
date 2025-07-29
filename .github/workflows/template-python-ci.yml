@@ -38,7 +38,8 @@ jobs:
         run: |
           # Automatically generate the tag from the Git commit SHA.
           COMMIT_SHA=${{ github.sha }}
-          IMAGE_TAG="sha-${COMMIT_SHA}-developer"
+          TAG_SUFFIX="developer"  # Define a reusable tag suffix
+          IMAGE_TAG="sha-${COMMIT_SHA}-${TAG_SUFFIX}"
 
           # Use inputs to construct the full image name
           FULL_IMAGE_NAME="${{ inputs.registry }}/${{ inputs.image_name }}:${IMAGE_TAG}"
