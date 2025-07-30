@@ -1,5 +1,5 @@
 from src.config.interface import ConfigIF
 
 
-class DomainConfigInterface(ConfigIF):
+class DomainConfigIF(ConfigIF):
     pass
