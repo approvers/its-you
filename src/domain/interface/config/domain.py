@@ -1,5 +1,24 @@
+from datetime import timedelta
+
+from pydantic import Field
+
 from src.config.interface import ConfigIF
 
 
 class DomainConfigIF(ConfigIF):
-    pass
+    REACT_PROBABILITY: float = Field(
+        gte=float(0), lt=float(1),
+        description="Probability to react to a message"
+    )
+    INTERVAL_FOR_SAME_TARGET_SEC: timedelta = Field(
+        gte=timedelta(minutes=0),
+        description="Time interval to react to a same target"
+    )
+    DO_REACT_TO_GROUP: bool = Field(
+        default=False,
+        description="Whether or not to react to a group"
+    )
+    DO_REACT_TO_USER: bool = Field(
+        default=True,
+        description="Whether or not to react to a user"
+    )
