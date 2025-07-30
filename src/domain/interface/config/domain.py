@@ -1,7 +1,5 @@
-from pydantic import BaseModel
-
-from src.common.interface import Interface
+from src.config.interface import ConfigIF
 
 
-class DomainConfigInterface(BaseModel, Interface):
+class DomainConfigInterface(ConfigIF):
     pass
