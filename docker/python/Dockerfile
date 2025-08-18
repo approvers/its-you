@@ -60,7 +60,7 @@ WORKDIR ${APP_DIR}
 RUN --mount=type=cache,target=/tmp/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --dev
+    uv sync --frozen --dev
 
 # =================================================================
 FROM gcr.io/distroless/base-debian12:nonroot AS runner
