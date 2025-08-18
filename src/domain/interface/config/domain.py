@@ -7,7 +7,7 @@ from src.config.interface import ConfigIF
 
 class DomainConfigIF(ConfigIF):
     REACT_PROBABILITY: float = Field(
-        ge=0.0, lt=1.0, description="Probability to react to a message"
+        ge=0.0, le=1.0, description="Probability to react to a message"
     )
     INTERVAL_FOR_SAME_TARGET_SEC: timedelta = Field(
         ge=timedelta(seconds=0), description="Time interval to react to a same target"
