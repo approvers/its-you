@@ -28,7 +28,7 @@ RUN uv python install ${PYTHON_VERSION} && \
 WORKDIR ${APP_DIR}
 
 # Install dependencies
-RUN --mount=type=cache,target=/root/.cache/uv \
+RUN --mount=type=cache,target=/tmp/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project --no-dev --no-editable
@@ -56,7 +56,11 @@ ENV PATH="${VENV_DIR}/bin:$PATH"
 
 WORKDIR ${APP_DIR}
 
-RUN uv sync --dev
+# Install dev dependencies
+RUN --mount=type=cache,target=/tmp/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --dev
 
 # =================================================================
 FROM gcr.io/distroless/base-debian12:nonroot AS runner
