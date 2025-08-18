@@ -21,4 +21,10 @@ jobs:
 
     permissions:
       contents: read
+    permissions:
+      contents: read
       packages: write
+    with:
+      is_release: true
+      tags: ''
+      image_name: ${{ github.repository }}
