@@ -63,6 +63,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --dev
 
 CMD ["python", "main.py"]
+
 # =================================================================
 FROM gcr.io/distroless/base-debian12:nonroot AS runner
 
