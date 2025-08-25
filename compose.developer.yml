@@ -7,6 +7,8 @@ services:
     platform: linux/amd64
     image: its-you-developer
     container_name: its-you-app
+    # TODO: Change here to start a bot process!
+    command: ["sleep", "infinity"]
     tty: true
     develop:
       watch:
