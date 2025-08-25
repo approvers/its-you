@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 
 # NOTE:
 #   Change here to change dependencies to load!
-__MODULES: Final[Iterable[Module]] = (PydanticDomainConfigModule(),)
+__MODULES: "Final[Iterable[Module]]" = (PydanticDomainConfigModule(),)
 
-DIContainer: Final[Injector] = Injector(
+DIContainer: "Final[Injector]" = Injector(
     modules=__MODULES,
     auto_bind=False,
 )
