@@ -6,7 +6,7 @@ from src.domain.config.interface import DomainConfigIF
 
 
 class PydanticDomainConfigModule(ModuleBase):
-    __BINDINGS = (
+    _BINDINGS = (
         BindEntry(
             interface=DomainConfigIF,
             to=ItsYouConfig,

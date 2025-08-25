@@ -21,10 +21,10 @@ class BindEntry(Generic[InterfaceT]):
 
 
 class ModuleBase(Module):
-    __BINDINGS: "Iterable[BindEntry[ABC]]"
+    _BINDINGS: "Iterable[BindEntry[ABC]]"
 
     def configure(self, binder: "Binder") -> None:
-        for entry in self.__BINDINGS:
+        for entry in self._BINDINGS:
             binder.bind(
                 interface=entry.interface,
                 to=entry.to,
