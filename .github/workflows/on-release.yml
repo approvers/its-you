@@ -1,0 +1,30 @@
+name: Release CI
+
+"on":
+  release:
+    types:
+      - released
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: Build Debug Image
+
+    uses: ./.github/workflows/template-build-and-push.yml
+    with:
+      is_release: true
+      tags: ${{ github.event.release.tag_name }}
+      image_name: ${{ github.repository }}
+
+    permissions:
+      contents: read
+    permissions:
+      contents: read
+      packages: write
+    with:
+      is_release: true
+      tags: ''
+      image_name: ${{ github.repository }}
