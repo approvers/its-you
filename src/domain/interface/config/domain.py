@@ -1,20 +1,27 @@
+from abc import abstractmethod
 from datetime import timedelta
-
-from pydantic import Field
 
 from src.config.interface import ConfigIF
 
 
+# noinspection PyPep8Naming
 class DomainConfigIF(ConfigIF):
-    REACT_PROBABILITY: float = Field(
-        ge=0.0, le=1.0, description="Probability to react to a message"
-    )
-    INTERVAL_FOR_SAME_TARGET_SEC: timedelta = Field(
-        ge=timedelta(seconds=0), description="Time interval to react to a same target"
-    )
-    DO_REACT_TO_GROUP: bool = Field(
-        default=False, description="Whether or not to react to a group"
-    )
-    DO_REACT_TO_USER: bool = Field(
-        default=True, description="Whether or not to react to a user"
-    )
+    @property
+    @abstractmethod
+    def REACT_PROBABILITY(self) -> float:
+        pass
+
+    @property
+    @abstractmethod
+    def INTERVAL_FOR_SAME_TARGET_SEC(self) -> timedelta:
+        pass
+
+    @property
+    @abstractmethod
+    def DO_REACT_TO_GROUP(self) -> bool:
+        pass
+
+    @property
+    @abstractmethod
+    def DO_REACT_TO_USER(self) -> bool:
+        pass
