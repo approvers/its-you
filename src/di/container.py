@@ -2,6 +2,8 @@ from typing import TYPE_CHECKING
 
 from injector import Injector
 
+from src.di.domain.config.pydantic import PydanticDomainConfigModule
+
 if TYPE_CHECKING:
     from typing import Iterable, Final
 
@@ -9,7 +11,7 @@ if TYPE_CHECKING:
 
 # NOTE:
 #   Change here to change dependencies to load!
-__MODULES: Final[Iterable[Module]] = set()
+__MODULES: Final[Iterable[Module]] = (PydanticDomainConfigModule(),)
 
 DIContainer: Final[Injector] = Injector(
     modules=__MODULES,
