@@ -1,7 +1,5 @@
-from pydantic import BaseModel
-
 from src.common.interface import Interface
 
 
-class ConfigIF(BaseModel, Interface):
+class ConfigIF(Interface):
     pass
