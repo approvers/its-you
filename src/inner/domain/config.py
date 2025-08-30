@@ -1,4 +1,4 @@
-from src.config.interface import ConfigIF
+from src.common.config import ConfigIF
 
 
 class DomainConfigIF(ConfigIF):

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.domain.config.interface import DomainConfigIF
+from src.inner.domain.config import DomainConfigIF
 
 
 class ItsYouConfig(DomainConfigIF, BaseModel):
