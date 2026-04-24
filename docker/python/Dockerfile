@@ -36,7 +36,7 @@ RUN --mount=type=cache,target=/tmp/.cache/uv \
 COPY ./ ${APP_DIR}
 
 # =================================================================
-FROM ubuntu:24.04 AS developer
+FROM ubuntu:26.04 AS developer
 
 # Inherit Common environment variables
 ARG PYTHON_BIN_PATH
